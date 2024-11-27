@@ -4,12 +4,16 @@
 
 /*---------------------------- Variables (state) ----------------------------*/
 let counter = 1
+let x = 0
+let o = 0
+let redo = []
+let undo = []
 
 
 /*------------------------ Cached Element References ------------------------*/
-// const whosTurn = document.createElement("h4")
-// const bodyElement = document.querySelector("body")
-// bodyElement.appendChild(whosTurn)
+const scoreElement = document.createElement("h4")
+const bodyElement = document.querySelector("body")
+bodyElement.appendChild(scoreElement)
 // whosTurn.textContent = "Lets see who win!"
 const messageElement = document.querySelector("#message")
 
@@ -30,6 +34,9 @@ const resetButton = document.querySelector("button")
 messageElement.textContent = "welcome"
 const randomButton = document.querySelector("#random-button")
 
+const undoButoon = document.querySelector("#undo")
+const redoButoon = document.querySelector("#redo")
+
 /*-------------------------------- Functions --------------------------------*/
 
 function addXO(sqrEvent) {
@@ -38,17 +45,27 @@ function addXO(sqrEvent) {
         // console.log(sqrEvent.target)
         counter += 1
         messageElement.textContent = "It is O turn"
+        undo.push(sqrEvent.target.id)
+        console.log(undo)
         // console.log(sqrElements[0])
         // console.log(sqrElements)
         // whosTurn.textContent = counter
         // console.log(sqrElements[0].textContent)
+        // setTimeout(function() {
+        //     randomChoice();
+        // }, 10000)
     }
-    else if (counter % 2 == 0 && counter < 10 && sqrEvent.target.textContent==="") {
+    else if (counter % 2 == 0 && counter < 10 && sqrEvent.target.textContent === "") {
         sqrEvent.target.textContent = "O"
         // console.log(sqrEvent.target)
         counter += 1
         messageElement.textContent = "It is X turn"
-        // console.log(sqrElements)        
+        undo.push(sqrEvent.target.id)
+        console.log(undo)
+        // console.log(sqrElements)    
+        // setTimeout(function() {
+        //     randomChoice();
+        // }, 10000)    
     }
     if (counter >= 6)
         winnerCheck(sqrEvent.target.id)
@@ -63,6 +80,12 @@ function winnerCheck(e) {
         sqrElements[6 + a].style.color = 'red'
         counter = 11
         messageElement.textContent = `${sqrElements[0 + a].textContent} is the winner`
+        if (sqrElements[0 + a].textContent == "X")
+            x += 1
+        else
+            o += 1
+        scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+
     }
     else if ((sqrElements[0].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[8].textContent == "X")
         || (sqrElements[0].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[8].textContent == "O")) {
@@ -72,6 +95,12 @@ function winnerCheck(e) {
         sqrElements[8].style.color = 'red'
         counter = 11
         messageElement.textContent = `${sqrElements[0].textContent} is the winner`
+        if (sqrElements[0].textContent == "X")
+            x += 1
+        else
+            o += 1
+        scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+
     }
     else if ((sqrElements[2].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[6].textContent == "X")
         || (sqrElements[2].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[6].textContent == "O")) {
@@ -81,6 +110,12 @@ function winnerCheck(e) {
         sqrElements[6].style.color = 'red'
         counter = 11
         messageElement.textContent = `${sqrElements[4].textContent} is the winner`
+        if (sqrElements[4].textContent == "X")
+            x += 1
+        else
+            o += 1
+        scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+
 
     }
     else {
@@ -95,12 +130,20 @@ function winnerCheck(e) {
                 sqrElements[i + 2].style.color = 'red'
                 counter = 11
                 messageElement.textContent = `${sqrElements[e].textContent} is the winner`
+                if (sqrElements[e].textContent == "X")
+                    x += 1
+                else
+                    o += 1
+                scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+
             }
             i += 3
         }
     }
     if (counter == 10) {
         messageElement.textContent = "It is a tie!!"
+        scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+
     }
 
 }
@@ -113,26 +156,55 @@ const reset = () => {
     messageElement.textContent = "welcome"
     // whosTurn.textContent = "Lets see who win!"
     counter = 1
+    scoreElement.textContent = `X wins: ${x} and O wins: ${o}`
+    redo.splice(0, redo.length)
+    undo.splice(0, undo.length)
 }
 
-function randomChoice(){
-    let r= Math.floor(Math.random()*9)
+function randomChoice() {
+    let r = Math.floor(Math.random() * 9)
     console.log(r)
-    if(sqrElements[r].textContent==""){
+    if (sqrElements[r].textContent == "") {
         if (counter % 2 == 1 && counter < 10) {
             sqrElements[r].innerText = "X"
             counter += 1
-            messageElement.textContent = "It is O turn"          
+            messageElement.textContent = "It is O turn"
         }
         else if (counter % 2 == 0 && counter < 10) {
             sqrElements[r].textContent = "O"
             counter += 1
             messageElement.textContent = "It is X turn"
-        }        
-            winnerCheck(sqrElements[r].id)
+        }
+        winnerCheck(sqrElements[r].id)
     }
     else
-    randomChoice()
+        randomChoice()
+}
+function undoFun() {
+    if (counter < 11) {
+        let x = undo.pop()
+        console.log(x)
+        redo.push(x)
+        sqrElements[x].textContent = ""
+        counter -= 1
+        if (counter % 2 == 0)
+            messageElement.textContent = "It is O turn"
+        else if (counter % 2 == 1)
+            messageElement.textContent = "It is X turn"
+    }
+}
+function redoFun() {
+    let y = redo.pop()
+    undo.push(y)
+    if (counter % 2 == 0) {
+        messageElement.textContent = "It is O turn"
+        sqrElements[y].textContent = "O"
+    }
+    else {
+        messageElement.textContent = "It is X turn"
+        sqrElements[y].textContent = "X"
+    }
+    counter += 1
 }
 
 
@@ -140,4 +212,6 @@ function randomChoice(){
 
 resetButton.addEventListener("click", reset)
 randomButton.addEventListener("click", randomChoice)
+redoButoon.addEventListener("click", redoFun)
+undoButoon.addEventListener("click", undoFun)
 
