@@ -28,6 +28,7 @@ sqrElements.forEach((sqr) => {
 
 const resetButton = document.querySelector("button")
 messageElement.textContent = "welcome"
+const randomButton = document.querySelector("#random-button")
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -42,9 +43,7 @@ function addXO(sqrEvent) {
         // whosTurn.textContent = counter
         // console.log(sqrElements[0].textContent)
     }
-    else if (counter % 2 == 0 && counter < 10
-        // && sqrEvent.target.textContent==="" 
-    ) {
+    else if (counter % 2 == 0 && counter < 10 && sqrEvent.target.textContent==="") {
         sqrEvent.target.textContent = "O"
         // console.log(sqrEvent.target)
         counter += 1
@@ -56,11 +55,8 @@ function addXO(sqrEvent) {
 }
 function winnerCheck(e) {
     const a = e % 3
-    if (qrElements[0 + a].textContent == sqrElements[3 + a].textContent &&
-        sqrElements[3 + a].textContent == sqrElements[6 + a].textContent) {
-        // hardcoding condition:
-        // (sqrElements[0 + a].textContent == "X" && sqrElements[3 + a].textContent == "X" && sqrElements[6 + a].textContent == "X")
-        // || (sqrElements[0 + a].textContent == "O" && sqrElements[3 + a].textContent == "O" && sqrElements[6 + a].textContent == "O")
+    if ((sqrElements[0 + a].textContent == "X" && sqrElements[3 + a].textContent == "X" && sqrElements[6 + a].textContent == "X")
+        || (sqrElements[0 + a].textContent == "O" && sqrElements[3 + a].textContent == "O" && sqrElements[6 + a].textContent == "O")) {
         // whosTurn.textContent = "we have winner"
         sqrElements[0 + a].style.color = 'red'
         sqrElements[3 + a].style.color = 'red'
@@ -68,11 +64,8 @@ function winnerCheck(e) {
         counter = 11
         messageElement.textContent = `${sqrElements[0 + a].textContent} is the winner`
     }
-    else if (sqrElements[0].textContent == sqrElements[4].textContent &&
-        sqrElements[4].textContent == sqrElements[8].textContent) {
-        //hardcoding condition:
-        // (sqrElements[0].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[8].textContent == "X")
-        //     || (sqrElements[0].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[8].textContent == "O")
+    else if ((sqrElements[0].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[8].textContent == "X")
+        || (sqrElements[0].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[8].textContent == "O")) {
         //      whosTurn.textContent = "we have winner"
         sqrElements[0].style.color = 'red'
         sqrElements[4].style.color = 'red'
@@ -80,11 +73,8 @@ function winnerCheck(e) {
         counter = 11
         messageElement.textContent = `${sqrElements[0].textContent} is the winner`
     }
-    else if (sqrElements[2].textContent == sqrElements[4].textContent &&
-        sqrElements[4].textContent == sqrElements[6].textContent) {
-        //hardcoding condition:
-        // (sqrElements[2].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[6].textContent == "X")
-        // || (sqrElements[2].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[6].textContent == "O")
+    else if ((sqrElements[2].textContent == "X" && sqrElements[4].textContent == "X" && sqrElements[6].textContent == "X")
+        || (sqrElements[2].textContent == "O" && sqrElements[4].textContent == "O" && sqrElements[6].textContent == "O")) {
         // whosTurn.textContent = "we have winner"
         sqrElements[2].style.color = 'red'
         sqrElements[4].style.color = 'red'
@@ -96,12 +86,9 @@ function winnerCheck(e) {
     else {
         let i = 0
         while (i < 7) {
-            console.log(i)
-            if (sqrElements[i + 0].textContent == sqrElements[i + 1].textContent
-                && sqrElements[i + 1].textContent == sqrElements[i + 2]) {
-                //hardcoding condition:
-                // (sqrElements[i + 0].textContent == "X" && sqrElements[i + 1].textContent == "X" && sqrElements[i + 2].textContent == "X")
-                // || (sqrElements[i + 0].textContent == "O" && sqrElements[i + 1].textContent == "O" && sqrElements[i + 2].textContent == "O")
+            // console.log(i)
+            if ((sqrElements[i + 0].textContent == "X" && sqrElements[i + 1].textContent == "X" && sqrElements[i + 2].textContent == "X")
+                || (sqrElements[i + 0].textContent == "O" && sqrElements[i + 1].textContent == "O" && sqrElements[i + 2].textContent == "O")) {
                 // whosTurn.textContent = "we have winner"
                 sqrElements[i + 0].style.color = 'red'
                 sqrElements[i + 1].style.color = 'red'
@@ -128,8 +115,29 @@ const reset = () => {
     counter = 1
 }
 
+function randomChoice(){
+    let r= Math.floor(Math.random()*9)
+    console.log(r)
+    if(sqrElements[r].textContent==""){
+        if (counter % 2 == 1 && counter < 10) {
+            sqrElements[r].innerText = "X"
+            counter += 1
+            messageElement.textContent = "It is O turn"          
+        }
+        else if (counter % 2 == 0 && counter < 10) {
+            sqrElements[r].textContent = "O"
+            counter += 1
+            messageElement.textContent = "It is X turn"
+        }        
+            winnerCheck(sqrElements[r].id)
+    }
+    else
+    randomChoice()
+}
+
 
 /*----------------------------- Event Listeners -----------------------------*/
 
 resetButton.addEventListener("click", reset)
+randomButton.addEventListener("click", randomChoice)
 
